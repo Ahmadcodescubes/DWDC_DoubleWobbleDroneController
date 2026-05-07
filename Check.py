@@ -1,15 +1,13 @@
 import pygame
-import time
 import serial as pyserial
-import VectorsPY
-
+pygame.display.init()
 def Show_available_ports(OS):
-  if OS == "Z":
+  if OS == "Z" or OS == "z":
     return(input("Please enter the COM port of your flight controller (e.g: 'COM4'): "))
-  if OS == "X":
+  if OS == "X" or OS == "x":
     return(input("Please paste the path to your flight controller (e.g: 'dev/TTYusb4'): "))
 
-port_touse = Show_available_ports(input("Enter your OS, Z for windows, X for Linux based OS")) #sets the port_to_use to the user input 
+port_touse = Show_available_ports(input("Enter your OS, Z for windows, X for Linux based OS: ")) #sets the port_to_use to the user input 
 
 def check_for_gamepad():
   pygame.joystick.init()
@@ -28,16 +26,15 @@ print(check)
 ser = Serial_Initialize(port_touse, 115200)
 def use_Gamepad():
   if check == True:
-    pos = VectorsPY.Vector2(0.0,0.0)
-    pos2 = VectorsPY.Vector2(0.0,0.0)
     while True:
-      pos.x = pygame.joystick.Joystick(0).get_axis(0)
-      pos.y = pygame.joystick.Joystick(0).get_axis(1)
-      pos2.x = pygame.joystick.Joystick(0).get_axis(2)
-      pos2.y = pygame.joystick.Joystick(0).get_axis(3)
-      joined = str(pos) + str(pos2)
+      pygame.event.pump()
+      posx = pygame.joystick.Joystick(0).get_axis(0)
+      posz = pygame.joystick.Joystick(0).get_axis(1)
+      pos2rot = pygame.joystick.Joystick(0).get_axis(2)
+      pos2y = pygame.joystick.Joystick(0).get_axis(3)
+      joined = str(posx) + str(posz) + str(pos2y) + str(pos2rot)
       joined.strip("(").strip(")")
-      send_data(joined)
+      print(joined)
   else:
     print("Connect a controller and restart script to initialize")      
 
@@ -45,4 +42,5 @@ def send_data(data):
     ser.write(data.encode())
     print(f"Sent: {data}")
 
+send_data("F/C/1")
 use_Gamepad()
