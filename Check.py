@@ -1,6 +1,6 @@
 import pygame
 import serial as pyserial
-pygame.display.init()
+pygame.init()
 def Show_available_ports(OS):
   if OS == "Z" or OS == "z":
     return(input("Please enter the COM port of your flight controller (e.g: 'COM4'): "))
@@ -26,12 +26,13 @@ print(check)
 ser = Serial_Initialize(port_touse, 115200)
 def use_Gamepad():
   if check == True:
+    joystick = pygame.joystick.Joystick(0)
     while True:
       pygame.event.pump()
-      posx = pygame.joystick.Joystick(0).get_axis(0)
-      posz = pygame.joystick.Joystick(0).get_axis(1)
-      pos2rot = pygame.joystick.Joystick(0).get_axis(2)
-      pos2y = pygame.joystick.Joystick(0).get_axis(3)
+      posx = round(joystick.get_axis(0),1)
+      posz = round(joystick.get_axis(1),1)
+      pos2rot = round(joystick.get_axis(2),1)
+      pos2y = round(joystick.get_axis(3),1)
       joined = str(posx) + str(posz) + str(pos2y) + str(pos2rot)
       joined.strip("(").strip(")")
       print(joined)
