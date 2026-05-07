@@ -35,7 +35,7 @@ def use_Gamepad():
       pos2y = round(joystick.get_axis(3),1)
       joined = str(posx) + str(posz) + str(pos2y) + str(pos2rot)
       joined.strip("(").strip(")")
-      print(joined)
+      send_data(joined)
   else:
     print("Connect a controller and restart script to initialize")      
 
