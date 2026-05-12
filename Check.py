@@ -36,6 +36,7 @@ def use_Gamepad():
       joined = str(posx) + str(posz) + str(pos2y) + str(pos2rot)
       joined.strip("(").strip(")")
       send_data(joined)
+
   else:
     print("Connect a controller and restart script to initialize")      
 
