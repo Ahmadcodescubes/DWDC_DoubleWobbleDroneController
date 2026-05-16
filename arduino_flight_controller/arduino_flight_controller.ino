@@ -10,7 +10,6 @@ void setup() {
 
 	if (!radio.begin()) {
     Serial.println("404/rf");
-    while (1);
   }
 	else {
 		  Serial.println("NRF24 initialized");
@@ -33,15 +32,18 @@ void loop() {
     receivedText = Serial.readStringUntil('\n');
 
     receivedText.trim();
+		if (receivedText = "REPLY"){
+			Serial.println("YES");
+		}
 
 		if (receivedText == "DSCNT") {
 			Serial.println("CONTROLLER DISCONNECTED");
 			Serial.println("ENTERING SAFETY LANDING MODE");
 			char Safety[32] = {0};
-			recievedText = "0";
-			receivedtext.toCharArray(Safety, 32);
-			radio.write(&Safety, sizeof(Safety))
-			Serial.println("SAFETY PROTOCOL ACTIVATED, CONNECT A CONTROLLER WITHIN 5 SECONDS")
+			receivedText = "0";
+			receivedText.toCharArray(Safety, 32);
+			radio.write(&Safety, sizeof(Safety));
+			Serial.println("SAFETY PROTOCOL ACTIVATED, CONNECT A CONTROLLER WITHIN 5 SECONDS");
 		}
 		char buffer[32] = {0};
 		receivedText.toCharArray(buffer, 32);

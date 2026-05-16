@@ -1,6 +1,9 @@
 import pygame
 import serial as pyserial
 pygame.init()
+screen = pygame.display.set_mode((1280, 720))
+screen.fill("Black")
+clock = pygame.time.Clock()
 def Show_available_ports(OS):
   if OS == "Z" or OS == "z":
     return(input("Please enter the COM port of your flight controller (e.g: 'COM4'): "))
@@ -36,6 +39,7 @@ def use_Gamepad():
       joined = str(posx) + str(posz) + str(pos2y) + str(pos2rot)
       joined.strip("(").strip(")")
       send_data(joined)
+      clock.tick(120)
 
   else:
     print("Connect a controller and restart script to initialize")      
