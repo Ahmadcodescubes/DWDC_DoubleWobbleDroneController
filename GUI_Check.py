@@ -61,10 +61,15 @@ except:
 #initialize serial and font
 try:
     text_surface = my_font.render(tadext, True, (255,255,255))
-    ser = serial.Serial(true_port, 115200, timeout=1)
+    ser = serial.Serial(true_port, 115200, timeout=0.016)
 except:
     pass
 
+ser.close()
+ser.open()
+if ser.readline().strip() == "404/rf":
+    running = False
+    screen.blit((my_font.render("RF is not working on controller board! It needs immediate attention!", True, (255,255,255))), (1280/2 - my_font.render("RF is not working on controller board! It needs immediate attention!", True, (255,255,255)).get_width()/2, 700))
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -88,7 +93,19 @@ while running:
     values = my_font.render("Values: ", True, (205,95,102))
     screen.blit(values , (200, 200))
     screen.blit((my_font.render(joined, True, (255,255,255))), (200 + values.get_width(), 200))
-
+    if ser.readable():
+        read = ser.readline().decode("utf-8").strip()
+        if read == "404/rf":
+            running = False
+            screen.fill((120, 6, 6))
+            screen.blit((my_font.render("RF is not working on controller board! It needs immediate attention!", True, (255,255,255))), (1280/2 - my_font.render("RF is not working on controller board! It needs immediate attention!", True, (255,255,255)).get_width()/2, 550))
+            pygame.display.flip()
+            time.sleep(2)
+        elif read == "DI":
+            ser.close
+            running = False
+        if read == "RE":
+            screen.blit((my_font.render("RE", True, (100,100,100))), (200, 600))
     # flip() the display to put your work on screen
     pygame.display.flip()
 

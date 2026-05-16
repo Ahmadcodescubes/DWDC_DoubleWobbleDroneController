@@ -28,15 +28,16 @@ void loop() {
 
   // Check if data exists
   if (Serial.available() > 0) {
-
-    receivedText = Serial.readStringUntil('\n');
-
     receivedText.trim();
 		if (receivedText = "REPLY"){
 			Serial.println("YES");
 		}
+		Serial.println("RE");
+    receivedText = Serial.readStringUntil('\n');
+
 
 		if (receivedText == "DSCNT") {
+			Serial.println("DI")
 			Serial.println("CONTROLLER DISCONNECTED");
 			Serial.println("ENTERING SAFETY LANDING MODE");
 			char Safety[32] = {0};
