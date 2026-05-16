@@ -4,20 +4,28 @@ import serial
 import serial.tools.list_ports
 import time
 
-devices = []
-
-for port in serial.tools.list_ports.comports():
-    print(f"{port.device}: {port.description}")
-
+# pygame setup
+pygame.init()
+pygame.font.init()
+Tecst = pygame.font.Font()
+screen = pygame.display.set_mode((1280, 720))
+clock = pygame.time.Clock()
+my_font = pygame.font.SysFont('Comic Sans MS', 30)
+running = True
 
 def find_device():
     for port in serial.tools.list_ports.comports():
+        screen.fill("Black")
+        test_port = my_font.render(f"Testing port:", True, (255,255,255))
+        port_render = my_font.render(port.device , True, (10,255,102))
+        screen.blit(test_port, (500,500))
+        screen.blit(port_render, (500 + test_port.get_width(), 500))
+        pygame.display.flip()
         try:
             ser = serial.Serial(port.device, 115200, timeout=1)
             print(f"Testing {port.device}")
-            for i  in range(10):
+            for i in range(3):
                 ser.write("REPLY".encode("utf-8"))
-                time.sleep(0.1)
                 readen = ser.readline().decode("utf-8")
                 if readen.strip() != "":
                     print(f"Reply from {port.device}: {readen}")
@@ -27,27 +35,35 @@ def find_device():
                    return(port.device)
         except:
            print("Access denied or board not responding")
+
 true_port = find_device()
 print(true_port)
 
-# pygame setup
-pygame.init()
-pygame.font.init()
-Tecst = pygame.font.Font()
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
-running = True
-my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
+if true_port == None:          
+    screen.fill("Black")
+    screen.blit((my_font.render("No port available for use ¯\_('v')_/¯ ", True, (255,255,255))), (1280/2-300,720/2-50))
+    pygame.display.flip()
+    time.sleep(5)
+    running = False
+else:
+    screen.fill("Black")
+    screen.blit((my_font.render(f"Working port: {true_port}", True, (255,255,255))), (500, 100))
+    time.sleep(1)
+#Find joysticks:
 try:
     pygame.joystick.Joystick(0).init()
-    tadext = "                               Controller found                           "
     joystick = pygame.joystick.Joystick(0)
+    tadext = f"Controller {joystick.get_name()} found"
 except:
     tadext = "Controller not found, connect a controller and restart the script"
 
-text_surface = my_font.render(tadext, True, (255,255,255))
-ser = serial.Serial(true_port, 115200, timeout=1)
+#initialize serial and font
+try:
+    text_surface = my_font.render(tadext, True, (255,255,255))
+    ser = serial.Serial(true_port, 115200, timeout=1)
+except:
+    pass
 
 while running:
     # poll for events
@@ -60,14 +76,18 @@ while running:
     posz = round(joystick.get_axis(1),1)
     pos2rot = round(joystick.get_axis(3),1)
     pos2y = round(joystick.get_axis(2),1)
-    joined = "X: " + str(posx) + " Z: " + str(posz) + " ROT: " + str(pos2y) + " Y: " + str(pos2rot)
-    ser.write(joined.encode('utf-8'))
+    joined = f"{posx}{posz}{pos2rot}{pos2y}"
+    ser.write(joined.strip().encode('utf-8'))
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
-    screen.blit(text_surface, (200,35))
-    screen.blit((my_font.render(joined, True, (255,255,255))), (200, 200))
-
-    # RENDER YOUR GAME HERE
+    screen.fill((0,0,0))
+    sent = my_font.render("Sent: ", True, (124, 180, 190))
+    screen.blit(sent, (200, 300))
+    screen.blit((my_font.render(joined, True, (255,255,255))), (200 + sent.get_width(), 300))
+    joined = f"X: {posx} Z: {posz} R: {pos2rot} Y: {pos2y}"
+    screen.blit(text_surface, (1280/2 - text_surface.get_width()/2,35))
+    values = my_font.render("Values: ", True, (205,95,102))
+    screen.blit(values , (200, 200))
+    screen.blit((my_font.render(joined, True, (255,255,255))), (200 + values.get_width(), 200))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
