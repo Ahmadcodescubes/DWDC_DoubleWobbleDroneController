@@ -57,6 +57,12 @@ try:
     tadext = f"Controller {joystick.get_name()} found"
 except:
     tadext = "Controller not found, connect a controller and restart the script"
+    tadext_render = my_font.render(tadext, True, (255,0,0)
+    screen.blit(tadext_render, (640 + tadext_port.get_width(),360 ))
+    pygame.display.flip()
+    time.sleep(5)
+    pygame.quit()
+    running = False
 
 #initialize serial and font
 try:
